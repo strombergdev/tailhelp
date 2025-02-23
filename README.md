@@ -53,7 +53,7 @@ To create and publish a new release:
 
 ```bash
 git tag v0.0.1
-git push origin v0.0.1
+git push origin v0.0.1 --tags
 ```
 
 2. Update your project to use the new version:
