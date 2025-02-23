@@ -44,3 +44,21 @@ func main() {
 
 - Go 1.19 or later
 - Tailscale daemon running on the system
+
+## Release Process
+
+To create and publish a new release:
+
+1. Create and push a new tag:
+
+```bash
+git tag v0.0.1
+git push origin v0.0.1
+```
+
+2. Update your project to use the new version:
+
+```bash
+go get github.com/strombergdev/tailhelp@v0.0.1
+go mod tidy
+```
