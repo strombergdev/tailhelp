@@ -43,7 +43,7 @@ func MyIP() (netip.Addr, error) {
 
 // PeersFromHostnamePrefix returns a list of peer DNS names that match the given hostname prefix.
 // If onlyOnline is true, only returns peers that are currently online.
-// Returns an error if no matching peers are found or if unable to get node status.
+// Returns an empty list if no matching peers are found.
 func PeersFromHostnamePrefix(hostname string, onlyOnline bool) ([]string, error) {
 	status, err := getStatus()
 	if err != nil {
@@ -59,10 +59,6 @@ func PeersFromHostnamePrefix(hostname string, onlyOnline bool) ([]string, error)
 			}
 			peers = append(peers, dnsName)
 		}
-	}
-
-	if len(peers) == 0 {
-		return nil, fmt.Errorf("no peer found with hostname: %s", hostname)
 	}
 
 	return peers, nil
