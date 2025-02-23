@@ -5,7 +5,7 @@ A simple Go package that provides helper functions for working with Tailscale's 
 ## Installation
 
 ```bash
-go get github.com/yourusername/tailhelp
+go get github.com/strombergdev/tailhelp
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ package main
 
 import (
     "log"
-    "github.com/yourusername/tailhelp"
+    "github.com/strombergdev/tailhelp"
 )
 
 func main() {
@@ -44,7 +44,3 @@ func main() {
 
 - Go 1.19 or later
 - Tailscale daemon running on the system
-
-## License
-
-MIT License (or choose your preferred license)
