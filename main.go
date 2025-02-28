@@ -7,18 +7,43 @@ import (
 	"fmt"
 	"net/netip"
 	"strings"
+	"sync"
+	"time"
 
 	"tailscale.com/client/tailscale"
 	"tailscale.com/ipn/ipnstate"
 )
 
-// getStatus returns the current Tailscale node status.
-// It creates a new LocalClient and fetches the status from the Tailscale daemon.
+var (
+	// Global client instance with mutex for thread safety
+	client     *tailscale.LocalClient
+	clientOnce sync.Once
+	clientMu   sync.RWMutex
+)
+
+// getClient returns the singleton LocalClient instance
+func getClient() *tailscale.LocalClient {
+	clientOnce.Do(func() {
+		clientMu.Lock()
+		defer clientMu.Unlock()
+		client = &tailscale.LocalClient{}
+	})
+
+	clientMu.RLock()
+	c := client
+	clientMu.RUnlock()
+	return c
+}
+
+// getStatus returns the current Tailscale node status with proper context management
 func getStatus() (*ipnstate.Status, error) {
-	client := &tailscale.LocalClient{}
-	status, err := client.Status(context.Background())
+	// Create a context with timeout to ensure resources are released
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel() // Ensure context is canceled when function returns
+
+	status, err := getClient().Status(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get Tailscale status: %v", err)
+		return nil, fmt.Errorf("failed to get Tailscale status: %w", err)
 	}
 	return status, nil
 }
