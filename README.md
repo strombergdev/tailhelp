@@ -31,7 +31,14 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    log.Printf("Found peers: %v", peers)
+    log.Printf("Found peer DNS names: %v", peers)
+
+    // Find IPv4 addresses of online peers with a specific hostname prefix
+    ips, err := tailhelp.PeerIPv4sFromHostnamePrefix("myprefix", true)
+    if err != nil {
+        log.Fatal(err)
+    }
+    log.Printf("Found peer IPs: %v", ips)
 }
 ```
 
@@ -39,6 +46,7 @@ func main() {
 
 - `MyIP() (netip.Addr, error)`: Returns the first IPv4 address of your Tailscale node
 - `PeersFromHostnamePrefix(hostname string, onlyOnline bool) ([]string, error)`: Returns a list of peer DNS names that match the given hostname prefix
+- `PeerIPv4sFromHostnamePrefix(hostname string, onlyOnline bool) ([]netip.Addr, error)`: Returns a list of IPv4 addresses for peers that match the given hostname prefix
 
 ## Requirements
 

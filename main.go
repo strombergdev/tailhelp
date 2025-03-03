@@ -88,3 +88,30 @@ func PeersFromHostnamePrefix(hostname string, onlyOnline bool) ([]string, error)
 
 	return peers, nil
 }
+
+// PeerIPv4sFromHostnamePrefix returns a list of Tailscale IPv4 addresses for peers that match the given hostname prefix.
+// If onlyOnline is true, only returns IPs from peers that are currently online.
+// Returns an empty list if no matching peers are found.
+func PeerIPv4sFromHostnamePrefix(hostname string, onlyOnline bool) ([]netip.Addr, error) {
+	status, err := getStatus()
+	if err != nil {
+		return nil, err
+	}
+
+	var ips []netip.Addr
+	for _, peer := range status.Peer {
+		dnsName := strings.TrimSuffix(peer.DNSName, ".")
+		if strings.HasPrefix(dnsName, hostname) {
+			if onlyOnline && !peer.Online {
+				continue
+			}
+			for _, ip := range peer.TailscaleIPs {
+				if ip.Is4() {
+					ips = append(ips, ip)
+				}
+			}
+		}
+	}
+
+	return ips, nil
+}
